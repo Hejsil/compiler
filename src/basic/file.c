@@ -9,10 +9,10 @@
 #include "file.h"
 
 int64_t get_file_size(char* filename) {
-    struct stat st;
+    struct stat file_stat;
 
-    if (stat(filename, &st) == 0)
-        return st.st_size;
+    if (stat(filename, &file_stat) == 0)
+        return file_stat.st_size;
 
     return -1;
 }
@@ -32,4 +32,12 @@ char* read_all_text_from_file(char* filename) {
     fclose(file);
 
     return result;
+}
+
+bool is_same_file(char *file1, char *file2) {
+    struct stat file1_stat, file2_stat;
+    stat(file1, &file1_stat);
+    stat(file2, &file2_stat);
+
+    return file1_stat.st_ino == file2_stat.st_ino;
 }
