@@ -43,8 +43,8 @@ void get_next_token(Scanner *scanner, Token *result) {
         }
 
         int64_t start_index = result->position.index;
-        int64_t lenght = scanner->position.index - start_index;
-        char* str = allocate_string_copy(&scanner->text_to_scan[start_index], lenght);
+        int64_t length = scanner->position.index - start_index;
+        char* str = allocate_string_copy(&scanner->text_to_scan[start_index], length);
 
         if (result->type == TOKEN_NUMBER_FLOAT) {
             result->number_float = atof(str);
@@ -58,16 +58,28 @@ void get_next_token(Scanner *scanner, Token *result) {
 
     // TODO: More cases
     switch (current) {
-        case '"':
+        case '"': {
             result->type = TOKEN_STRING;
 
             // TODO: Handle escape characters
             while (get_next_char(scanner) != '"');
 
             int64_t start_index = result->position.index + 1;
-            int64_t lenght = scanner->position.index - start_index;
-            result->value = allocate_string_copy(&scanner->text_to_scan[start_index], lenght - 1);
+            int64_t length = scanner->position.index - start_index;
+            result->value = allocate_string_copy(&scanner->text_to_scan[start_index], length - 1);
             return;
+        }
+        case '#': {
+            result->type = TOKEN_DIRECTIVE;
+
+            while (isalnum(peek_next_char(scanner)))
+                get_next_char(scanner);
+
+            int64_t start_index = result->position.index;
+            int64_t length = scanner->position.index - start_index;
+            result->value = allocate_string_copy(&scanner->text_to_scan[start_index], length);
+            return;
+        }
         case '(':
             result->type = TOKEN_PAR_LEFT;
             return;
@@ -118,6 +130,8 @@ void get_next_token(Scanner *scanner, Token *result) {
             result->type = TOKEN_END_OF_FILE;
             return;
     }
+
+    result->type = TOKEN_UNKNOWN;
 }
 
 char get_next_char(Scanner *scanner) {
