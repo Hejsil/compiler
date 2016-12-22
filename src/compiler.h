@@ -9,10 +9,12 @@
 #include "syntax/scanning.h"
 
 typedef struct {
+    // OWN: The compiler owns both levels pointers
     char** sources;
     int64_t sources_capacity;
     int64_t sources_count;
 
+    // OWN:
     Scanner* scanners;
     int64_t scanner_capacity;
     int64_t scanner_count;

@@ -40,6 +40,7 @@ enum {
 };
 
 typedef struct {
+    // OWN:
     char* text_to_scan;
     Position position;
 } Scanner;
@@ -51,6 +52,11 @@ typedef struct {
     union {
         int64_t number_int;
         double number_float;
+
+        // OWN: Only needs to deallocate when of type:
+        // TOKEN_IDENTIFIER,
+        // TOKEN_STRING,
+        // TOKEN_DIRECTIVE,
         char* value;
     };
 } Token;
@@ -59,7 +65,7 @@ char peek_char(Scanner* scanner, int64_t offset);
 char peek_next_char(Scanner* scanner);
 char get_next_char(Scanner* scanner);
 void skip_whitespace(Scanner* scanner);
-void get_next_token(Scanner* scanner, Token* result);
+Token get_next_token(Scanner* scanner);
 void deinit_scanner(Scanner* scanner);
 void deinit_token(Token* token);
 

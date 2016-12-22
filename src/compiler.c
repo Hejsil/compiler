@@ -15,7 +15,7 @@ void init_compiler(Compiler* compiler) {
     compiler->scanners = malloc(sizeof(Scanner) * compiler->scanner_capacity);
 
     compiler->sources_capacity = 2;
-    compiler->scanner_count = 0;
+    compiler->sources_count = 0;
     compiler->sources = malloc(sizeof(char*) * compiler->sources_capacity);
 }
 
