@@ -38,10 +38,10 @@ void dynamic_array_add(Dynamic_Array *array, int64_t index, void *element) {
         array->data = realloc(array->data, array->capacity * array->element_size);
     }
 
-    memmove(&array->data[(index + 1) * array->element_size],
-           &array->data[index * array->element_size],
-           (array->count - index) * array->element_size);
-    memcpy(&array->data[index * array->element_size], element, array->element_size);
+    memmove(dynamic_array_get_ptr(array, index + 1),
+            dynamic_array_get_ptr(array, index),
+            (array->count - index) * array->element_size);
+    memcpy(dynamic_array_get_ptr(array, index), element, array->element_size);
     array->count++;
 }
 
@@ -55,12 +55,12 @@ void dynamic_array_remove(Dynamic_Array *array, int64_t index) {
     assert(array->count > 0);
     assert(index < array->count);
     array->count--;
-    memmove(&array->data[index * array->element_size],
-           &array->data[(index + 1) * array->element_size],
-           (array->count - index) * array->element_size);
+    memmove(dynamic_array_get_ptr(array, index),
+            dynamic_array_get_ptr(array, index + 1),
+            (array->count - index) * array->element_size);
 
 #if !NDEBUG
-    memset(&array->data[array->count * array->element_size], 0, array->capacity - array->count);
+    memset(dynamic_array_get_ptr(array, array->count), 0, array->capacity - array->count);
 #endif
 }
 
@@ -68,13 +68,24 @@ void inline dynamic_array_remove_last(Dynamic_Array *array) {
     dynamic_array_remove(array, array->count - 1);
 }
 
-void dynamic_array_get(Dynamic_Array *array, int64_t index, void *result) {
+void dynamic_array_get(Dynamic_Array *array, int64_t index, void* result) {
     assert(array->element_size > 0);
     assert(index >= 0);
     assert(index < array->count);
-    memcpy(result, array->data + (index * array->element_size), array->element_size);
+    memcpy(result, dynamic_array_get_ptr(array, index), array->element_size);
 }
 
-void inline dynamic_array_get_last(Dynamic_Array *array, void *result) {
+void* dynamic_array_get_ptr(Dynamic_Array *array, int64_t index) {
+    assert(array->element_size > 0);
+    assert(index >= 0);
+    assert(index < array->count);
+    return &array->data[index * array->element_size];
+}
+
+void inline dynamic_array_get_last(Dynamic_Array *array, void* result) {
     dynamic_array_get(array, array->count - 1, result);
+}
+
+void inline *dynamic_array_get_ptr_last(Dynamic_Array *array) {
+    return dynamic_array_get_ptr(array, array->count - 1);
 }

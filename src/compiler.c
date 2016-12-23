@@ -2,15 +2,10 @@
 // Created by jimmi on 12/19/16.
 //
 
-#include <assert.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include "compiler.h"
 #include "basic/string.h"
 #include "basic/file.h"
-#include "syntax/scanning.h"
-#include "ast/position.h"
-#include "basic/dynamic_array.h"
 
 void init_compiler(Compiler* compiler) {
     dynamic_array_init(&compiler->file_names, sizeof(char*), 16);
@@ -53,17 +48,14 @@ void deinit_compiler(Compiler *compiler) {
         free(file_name);
     }
 
-    dynamic_array_deinit(&compiler->file_names);
-    dynamic_array_deinit(&compiler->scanners);
-}
+    while (compiler->scanners.count != 0) {
+        Scanner scanner;
+        dynamic_array_get_last(&compiler->scanners, &scanner);
+        dynamic_array_remove_last(&compiler->scanners);
 
-bool pop_scanner(Compiler* compiler, Scanner* result) {
-    if (compiler->scanners.count <= 0) {
-        return false;
+        deinit_scanner(&scanner);
     }
 
-    dynamic_array_get_last(&compiler->scanners, result);
-    dynamic_array_remove_last(&compiler->scanners);
-
-    return true;
+    dynamic_array_deinit(&compiler->file_names);
+    dynamic_array_deinit(&compiler->scanners);
 }

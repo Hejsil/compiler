@@ -22,6 +22,5 @@ void init_compiler(Compiler* compiler);
 void deinit_compiler(Compiler* compiler);
 bool make_scanner_from_file(Compiler* compiler, char* filename, int64_t length);
 void make_scanner_from_text(Compiler* compiler, char* text, int64_t text_length);
-bool pop_scanner(Compiler* compiler, Scanner* result);
 
 #endif //GOODLANG_COMPILER_H

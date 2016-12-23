@@ -1,8 +1,6 @@
 #include <string.h>
 #include <stdio.h>
 #include "compiler.h"
-#include "basic/dynamic_array.h"
-#include "syntax/scanning.h"
 
 int main() {
     char* text = "Hello World\n";

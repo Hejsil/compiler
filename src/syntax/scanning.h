@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "../ast/position.h"
+#include "../basic/dynamic_array.h"
 
 enum {
     TOKEN_IDENTIFIER,
@@ -42,6 +43,9 @@ enum {
 typedef struct {
     // OWN:
     char* text_to_scan;
+
+    // Elements: Token
+    Dynamic_Array tokens;
     Position position;
 } Scanner;
 
@@ -65,6 +69,8 @@ char peek_char(Scanner* scanner, int64_t offset);
 char peek_next_char(Scanner* scanner);
 char get_next_char(Scanner* scanner);
 void skip_whitespace(Scanner* scanner);
+Token peek_token(Scanner* scanner, int64_t offset);
+Token peek_next_token(Scanner* scanner);
 Token get_next_token(Scanner* scanner);
 void deinit_scanner(Scanner* scanner);
 void deinit_token(Token* token);

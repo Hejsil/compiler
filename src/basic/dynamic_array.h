@@ -23,7 +23,9 @@ void dynamic_array_add_last(Dynamic_Array* array, void* element);
 void dynamic_array_remove(Dynamic_Array* array, int64_t index);
 void dynamic_array_remove_last(Dynamic_Array* array);
 void dynamic_array_get(Dynamic_Array* array, int64_t index, void* result);
+void* dynamic_array_get_ptr(Dynamic_Array* array, int64_t index);
 void dynamic_array_get_last(Dynamic_Array* array, void* result);
+void* dynamic_array_get_ptr_last(Dynamic_Array* array);
 
 
 
