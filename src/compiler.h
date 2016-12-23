@@ -6,23 +6,20 @@
 #define GOODLANG_COMPILER_H
 
 #include <stdbool.h>
+#include <sys/stat.h>
 #include "syntax/scanning.h"
+#include "basic/dynamic_array.h"
 
 typedef struct {
-    // OWN: The compiler owns both levels pointers
-    char** sources;
-    int64_t sources_capacity;
-    int64_t sources_count;
+    // Elements: char*
+    Dynamic_Array file_names;
 
-    // OWN:
-    Scanner* scanners;
-    int64_t scanner_capacity;
-    int64_t scanner_count;
+    // Elements: Scanner
+    Dynamic_Array scanners;
 } Compiler;
 
 void init_compiler(Compiler* compiler);
 void deinit_compiler(Compiler* compiler);
-Scanner* allocate_next_scanner(Compiler* compiler, char* filename, int64_t length);
 bool make_scanner_from_file(Compiler* compiler, char* filename, int64_t length);
 void make_scanner_from_text(Compiler* compiler, char* text, int64_t text_length);
 bool pop_scanner(Compiler* compiler, Scanner* result);

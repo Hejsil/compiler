@@ -74,6 +74,9 @@
 ### Types
 * Always use the integer types defined in `stdint.h`
 * Always use the bool defined in `stdbool.h`, when this behavior is needed.
+* Prefer signed over unsigned integer
+    * If number should always be positive, use asserts to assure this
+        * `int64_t i; assert(i >= 0); > uint64_t i;`
 
 ### Return values
 * Prefer using the return value for error handling

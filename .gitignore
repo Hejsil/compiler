@@ -1,4 +1,4 @@
-# Object files
+# Object file_names
 *.o
 *.ko
 *.obj
@@ -28,9 +28,11 @@
 *.x86_64
 *.hex
 
-# Debug files
+# Debug file_names
 *.dSYM/
 *.su
 
 .idea/*
+.vscode/*
+build/*
 cmake-build-debug/*
