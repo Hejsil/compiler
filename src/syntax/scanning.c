@@ -190,7 +190,9 @@ void deinit_token(Token* token) {
         case TOKEN_STRING:
         case TOKEN_IDENTIFIER:
         case TOKEN_DIRECTIVE:
-            free(token->value);
+            if (token->value != NULL)
+                free(token->value);
+
             break;
     }
 }

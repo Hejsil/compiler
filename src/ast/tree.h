@@ -6,6 +6,7 @@
 #define GOODLANG_TREE_H
 
 #include <stdint.h>
+#include "../basic/dynamic_array.h"
 
 enum {
     AST_CODE_BLOCK,
@@ -24,21 +25,51 @@ enum {
     AST_BINARY_LESSER_OR_EQUAL_THAN,
 
     AST_UNARY_MINUS,
-    AST_UNARY_NEGATION
+    AST_UNARY_NEGATION,
+
+    AST_LITERAL_INT,
+    AST_LITERAL_FLOAT,
+    AST_LITERAL_STRING,
+
+    AST_CALL
 };
 
+// TODO: Figure out a way to have an cache friendly tree to traverse
 typedef struct AST_Node_S {
     uint8_t type;
 
     union {
         struct {
+            // OWN
             struct AST_Node_S* left;
+            // OWN
             struct AST_Node_S* right;
         } binary;
 
         struct {
+            // OWN
             struct AST_Node_S* child;
         } unary;
+
+        struct {
+            // OWN
+            struct AST_Node_S* function;
+
+            // Elements: AST_Node*
+            Dynamic_Array arguments;
+        } call;
+
+        struct {
+            int64_t value;
+        } int_literal;
+
+        struct {
+            double value;
+        } float_literal;
+
+        struct {
+            char* value;
+        } string_literal;
     };
 } AST_Node;
 
