@@ -80,6 +80,30 @@ x := 5;
 y := 5.5;
 ```
 
+
+#### Complex Declaration and Assignment
+Simple declaration:
+```
+<name> : <type> <maybe assignment> ;
+```
+Simple declarations follow the syntax as above.
+
+Complex declaration:
+```
+<name> :: <complextype> {
+    // Body
+}
+```
+
+Where in the above the complex type can be one of:
+
+* Struct/Record: A data structure that can contain one or more simple declarations
+* Class: A data structure that can contain both simple and advanced data structures. (This is not guaranteed to be supported)
+* Function signature: A signature for a function or procedure, following the construction
+    ```<return type> (<arg1> : <type1>, ..., <argn> : <typen>)```
+* Type: Not yet sure if this is allowed
+Etc...
+
 ### Expressions
 Binary operators:
 ```
@@ -120,7 +144,10 @@ deref a
 ```
 
 ## Language Constructs 
-### Array Literals 
+### Array Literals
+
+The following things are only possible at compile time.
+
 ```
 // Array literal syntax:
 array1 := Int[]{ 1, 2, 3, 4, 5 };
@@ -148,6 +175,31 @@ array5 := [1 .. 4, 2];
 // array5 := Int[]{ 1, 3 };
 ```
 
+#### Declaring array before setting size
+An array can be declared, and then initialized with size later:
+```
+array1 : Int[];
+array1 = [4];
+```
+
+Or it can have its type and size initialized by at once.
+
+```
+array1 := Int[4]
+```
+
+By just initializing the array, all elements are set according to standard.
+But since this may contradict with the above array literals a few changes could be made:
+```
+// Array literals:
+Remain as is, and dont have to specify the size as it can be determined by the size of the input
+
+// Array sequense syntax:
+array1 := {1 .. 5};
+array2 := {2 .. 8, 2};
+etc.
+```
+
 ### Foreach loop
 General syntax:
 ```
@@ -161,9 +213,42 @@ for (int i = 0; i < 5; i++)
 
 // Our language alternatives
 foreach i in [0 .. 4]
+
+// or if using enumerable or similar
+array := Int[] {1,2,3,4,5};
+foreach i in array
 ```
 
 
 
 ### Control Flow
 
+### Language options
+
+It should be possible for the user to control what the compiler should and shouldn't allow. This will most likely be in a separate file.
+For complex programs over multiple folders, multiple files could be used, where the rules apply to that folder and all sub-folders of source files.
+
+```
+// Using the example from "Array Literals"
+rule(arraysequeseremainder) = try warning
+```
+
+In the above example a rule ```arraysequenseremainder``` is set. This rule have the following options:
+
+* try: It will try to fill the array as shown in the comment from the example
+* ceiling: The compiler will include the next number in the array as well, making it one element larger```array5 := Int{1,3,5}```.
+* warn: It will show a warning when it happens. ```warn``` cannot be called without ```try``` or ```ceiling```.
+* error: The compiler will throw an error, because the program does not allow it
+
+other ideas could include:
+
+* Disallow heap allocation
+* No classes
+* Recursion rules
+* Memory Management
+* Out of bounds
+* Exceptions
+* And a lot more
+
+This may add a lot of complexity to the compiler, but it also gives a lot more power to the programmer to control the behavior of their code.
+It also allows the programmer to decide how unsafe the code should be.
