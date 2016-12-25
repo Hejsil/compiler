@@ -54,55 +54,66 @@ main :: Int (args: String[]) {
 ### Declaration and Assignment
 Inspired by Jai
 
-Declaration:
+The full declaration syntax are as followed:
 ```
-// Syntax <name> : <type>
+<declaration> -> <name> : <type> ;
+              | <name> : <maybe type> = <expression> ;
+              | <name> : <maybe type> : <const expression> ;
+```
+
+This is an othogonal syntax that allows a declaration to be expressed in several different ways. For simple variable declaration, the first syntax rule will apply.
+```
 x : Int;
 y : Double;
 ```
 
-Assignment:
+Here, `x` is a variable of type `Int` and `y` a variable of type `Double`.
+
+These variables can then be assigned values to, at a later stage in the code.
 ```
-// Syntax <variable> = <expr>
 x = 5;
 y = 5.5;
 ```
 
-We can combine these, if we want to initialize at declaration:
+There are however many times, where a varable should be initialized at the same time as it was declared. For this, the second syntax rule can be used:
 ```
 x : Int = 5;
 y : Double = 5.5;
 ```
 
-And the types can be infered by omitting the type:
+The reason the `<type>` changed to `<maybe type>` is, that when a declaration is initialized, the type can be infered. The type can therefor be omitted if the programmer does not want to document the type.
 ```
 x := 5;
 y := 5.5;
 ```
 
+The third syntax rule are for constants.
+```
+x : Int : 5;
+y :: 5.5;
+```
 
-#### Complex Declaration and Assignment
-Simple declaration:
+Constants are required to be initialized on declaration. Constants also allows `<const expression>` instead of `<expression>`. This is because functions, types and other language constructs are constant declarations.
 ```
-<name> : <type> <maybe assignment> ;
-```
-Simple declarations follow the syntax as above.
+Vector3 :: struct {
+    x, y, z : Int;
+}
 
-Complex declaration:
-```
-<name> :: <complextype> {
-    // Body
+mul :: Int(x: Int, y: Int) {
+    return x * y;
 }
 ```
 
-Where in the above the complex type can be one of:
+Here, we use the infered type syntax for constant, but these declarations also have a type:
+```
+Vector3 : struct { Int, Int, Int } : struct {
+    x, y, z: Int;
+}
 
-* Struct/Record: A data structure that can contain one or more simple declarations
-* Class: A data structure that can contain both simple and advanced data structures. (This is not guaranteed to be supported)
-* Function signature: A signature for a function or procedure, following the construction
-    ```<return type> (<arg1> : <type1>, ..., <argn> : <typen>)```
-* Type: Not yet sure if this is allowed
-Etc...
+mul : Int(Int, Int) : Int(x: Int, y: Int) {
+    return x * y;
+}
+```
 
 ### Expressions
 Binary operators:
@@ -116,6 +127,13 @@ a < b
 a > b
 a <= b
 a >= b
+
+// Small idea:
+// These might give more readabillity
+a !< b // a >= b
+a !> b // a <= b
+a !<= b // a > b
+a !>= b // a < b
 
 // And/Or operator ideas
 // Idea 1:
@@ -143,6 +161,27 @@ ref a
 deref a
 ```
 
+## Basic types
+| Types   | Size                                                    |
+|---------|---------------------------------------------------------|
+| Int     | 64-bits                                                 |
+| Int8    | 8-bits                                                  |
+| Int16   | 16-bits                                                 |
+| Int32   | 32-bits                                                 |
+| Int64   | 64-bits                                                 |
+| UInt    | 64-bits                                                 |
+| UInt8   | 8-bits                                                  |
+| UInt16  | 16-bits                                                 |
+| UInt32  | 32-bits                                                 |
+| UInt64  | 64-bits                                                 |
+| Float   | 64-bits                                                 |
+| Float32 | 32-bits                                                 |
+| Float64 | 64-bits                                                 |
+| Bool    | 8-bits                                                  |
+| Bool1   | 1-bit when stored in an array. 8-bits alone.            |
+| Bool8   | 8-bits                                                  |
+| Char    | Variadic when stored in an array (UTF8). 32-bits alone. |
+
 ## Language Constructs 
 ### Array Literals
 
@@ -159,7 +198,7 @@ array4 := Int[]{ 5, 2, 8, 1 };
 array1 := [1 .. 5];
 array2 := [2 .. 8, 2];
 array3 := [1.0 .. 2.0, 0.5];
-// array4 has no array sequense alternative.
+// array4 have no array sequense alternative.
 
 // Array sequenses can be inclusive and exclusice
 // Inspired by math syntax:
@@ -195,8 +234,8 @@ But since this may contradict with the above array literals a few changes could 
 Remain as is, and dont have to specify the size as it can be determined by the size of the input
 
 // Array sequense syntax:
-array1 := {1 .. 5};
-array2 := {2 .. 8, 2};
+array1 := [1 .. 5];
+array2 := [2 .. 8, 2];
 etc.
 ```
 
@@ -219,27 +258,41 @@ array := Int[] {1,2,3,4,5};
 foreach i in array
 ```
 
-
-
 ### Control Flow
 
-### Language options
 
+### Built In Functions
+The language should support usefull built in functions that can do things which cannot be expressed in the base language without them.
+
+#### Type of
+
+#### Size of
+
+### Attribute
 It should be possible for the user to control what the compiler should and shouldn't allow. This will most likely be in a separate file.
 For complex programs over multiple folders, multiple files could be used, where the rules apply to that folder and all sub-folders of source files.
 
+#### array_sequese_remainder
 ```
-// Using the example from "Array Literals"
-rule(arraysequeseremainder) = try warning
+[array_sequese_remainder(WARNING_CEIL)]
+main :: Nothing () {
+    array := [1 .. 4, 2]; // Int[]{ 1, 3, 5 }
+}
+
+[array_sequese_remainder(WARNING_FLOOR)]
+main :: Nothing () {
+    array := [1 .. 4, 2]; // Int[]{ 1, 3 }
+}
+
+[array_sequese_remainder(ERROR)]
+main :: Nothing () {
+    array := [1 .. 4, 2]; // wont compile
+}
 ```
 
-In the above example a rule ```arraysequenseremainder``` is set. This rule have the following options:
+In the above example a rule ```array_sequese_remainder``` is set. The three examples show what the compiler will do, depending on how the attribute was set.
 
-* try: It will try to fill the array as shown in the comment from the example
-* ceiling: The compiler will include the next number in the array as well, making it one element larger```array5 := Int{1,3,5}```.
-* warn: It will show a warning when it happens. ```warn``` cannot be called without ```try``` or ```ceiling```.
-* error: The compiler will throw an error, because the program does not allow it
-
+#### TODO: others
 other ideas could include:
 
 * Disallow heap allocation
@@ -248,6 +301,8 @@ other ideas could include:
 * Memory Management
 * Out of bounds
 * Exceptions
+* No Implicit type conversions
+* Custom attributes?
 * And a lot more
 
 This may add a lot of complexity to the compiler, but it also gives a lot more power to the programmer to control the behavior of their code.
