@@ -181,6 +181,7 @@ deref a
 | Bool1   | 1-bit when stored in an array. 8-bits alone.            |
 | Bool8   | 8-bits                                                  |
 | Char    | Variadic when stored in an array (UTF8). 32-bits alone. |
+| Nothing | 0-bits                                                  |
 
 ## Language Constructs 
 ### Array Literals
