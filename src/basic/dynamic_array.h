@@ -16,6 +16,7 @@ typedef struct {
     int64_t count, capacity, element_size;
 } Dynamic_Array;
 
+void* dynamic_array_unsafe_get_ptr(Dynamic_Array* array, int64_t index);
 void dynamic_array_init(Dynamic_Array* array, int64_t element_size, int64_t capacity);
 void dynamic_array_deinit(Dynamic_Array *array);
 void* dynamic_array_allocate_at(Dynamic_Array* array, int64_t index);
