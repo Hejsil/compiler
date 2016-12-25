@@ -6,7 +6,8 @@
 #define GOODLANG_PARSING_H
 
 #include "../compiler.h"
+#include "../ast/tree.h"
 
-bool parse(Compiler* compiler);
+AST_Node* parse(Compiler* compiler);
 
 #endif //GOODLANG_PARSING_H

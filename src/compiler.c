@@ -19,11 +19,7 @@ bool make_scanner_from_file(Compiler* compiler, char* filename, int64_t filename
         return false;
 
     Scanner scanner;
-    scanner.position.source = allocate_string_copy(filename, filename_length);
-    scanner.position.line = 1;
-    scanner.position.column = 1;
-    scanner.position.index = 1;
-    scanner.text_to_scan = content;
+    init_scanner(&scanner, allocate_string_copy(filename, filename_length), content);
     dynamic_array_add_last(&compiler->scanners, &scanner);
     dynamic_array_add_last(&compiler->file_names, &scanner.position.source);
 
@@ -32,11 +28,7 @@ bool make_scanner_from_file(Compiler* compiler, char* filename, int64_t filename
 
 void make_scanner_from_text(Compiler* compiler, char* text, int64_t text_length) {
     Scanner scanner;
-    scanner.position.source = NULL;
-    scanner.position.line = 1;
-    scanner.position.column = 1;
-    scanner.position.index = 1;
-    scanner.text_to_scan = allocate_string_copy(text, text_length);
+    init_scanner(&scanner, NULL, allocate_string_copy(text, text_length));
     dynamic_array_add_last(&compiler->scanners, &scanner);
 }
 

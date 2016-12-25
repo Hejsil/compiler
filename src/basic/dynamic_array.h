@@ -18,6 +18,8 @@ typedef struct {
 
 void dynamic_array_init(Dynamic_Array* array, int64_t element_size, int64_t capacity);
 void dynamic_array_deinit(Dynamic_Array *array);
+void* dynamic_array_allocate_at(Dynamic_Array* array, int64_t index);
+void* dynamic_array_allocate_next(Dynamic_Array* array);
 void dynamic_array_add(Dynamic_Array* array, int64_t index, void* element);
 void dynamic_array_add_last(Dynamic_Array* array, void* element);
 void dynamic_array_remove(Dynamic_Array* array, int64_t index);

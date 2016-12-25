@@ -9,7 +9,7 @@ set(SOURCE_FILES
         src/ast/tree.c src/ast/tree.h
         src/ast/position.h
         src/basic/string.c src/basic/string.h
-        src/basic/file.c src/basic/file.h src/basic/dynamic_array.c src/basic/dynamic_array.h)
+        src/basic/file.c src/basic/file.h src/basic/dynamic_array.c src/basic/dynamic_array.h src/ast/position.c)
 
 option(DEBUG "Debug mode" ON)
 

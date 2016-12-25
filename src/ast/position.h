@@ -14,4 +14,6 @@ typedef struct {
     int64_t column;
 } Position;
 
+void init_position(Position* position, char* source);
+
 #endif //GOODLANG_POSITION_H

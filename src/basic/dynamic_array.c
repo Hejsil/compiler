@@ -26,7 +26,7 @@ void dynamic_array_deinit(Dynamic_Array *array) {
     array->data = NULL;
 }
 
-void dynamic_array_add(Dynamic_Array *array, int64_t index, void *element) {
+void* dynamic_array_allocate_at(Dynamic_Array *array, int64_t index) {
     assert(index >= 0);
     assert(array->element_size > 0);
     assert(array->capacity > 0);
@@ -41,11 +41,20 @@ void dynamic_array_add(Dynamic_Array *array, int64_t index, void *element) {
     memmove(dynamic_array_get_ptr(array, index + 1),
             dynamic_array_get_ptr(array, index),
             (array->count - index) * array->element_size);
+    return dynamic_array_get_ptr(array, index);
+}
+
+void* dynamic_array_allocate_next(Dynamic_Array *array) {
+    return dynamic_array_allocate_at(array, array->count);
+}
+
+void dynamic_array_add(Dynamic_Array *array, int64_t index, void *element) {
+    dynamic_array_allocate_at(array, index);
     memcpy(dynamic_array_get_ptr(array, index), element, array->element_size);
     array->count++;
 }
 
-void inline dynamic_array_add_last(Dynamic_Array *array, void *element) {
+void dynamic_array_add_last(Dynamic_Array *array, void *element) {
     dynamic_array_add(array, array->count, element);
 }
 
@@ -64,7 +73,7 @@ void dynamic_array_remove(Dynamic_Array *array, int64_t index) {
 #endif
 }
 
-void inline dynamic_array_remove_last(Dynamic_Array *array) {
+void dynamic_array_remove_last(Dynamic_Array *array) {
     dynamic_array_remove(array, array->count - 1);
 }
 
@@ -82,10 +91,10 @@ void* dynamic_array_get_ptr(Dynamic_Array *array, int64_t index) {
     return &array->data[index * array->element_size];
 }
 
-void inline dynamic_array_get_last(Dynamic_Array *array, void* result) {
+void dynamic_array_get_last(Dynamic_Array *array, void* result) {
     dynamic_array_get(array, array->count - 1, result);
 }
 
-void inline *dynamic_array_get_ptr_last(Dynamic_Array *array) {
+void* dynamic_array_get_ptr_last(Dynamic_Array *array) {
     return dynamic_array_get_ptr(array, array->count - 1);
 }

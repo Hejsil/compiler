@@ -4,10 +4,11 @@
 
 #include "scanning.h"
 #include "../basic/string.h"
+#include "../ast/position.h"
 #include <ctype.h>
 
 
-Token inline peek_next_token(Scanner *scanner) {
+Token peek_next_token(Scanner *scanner) {
     return peek_token(scanner, 0);
 }
 
@@ -143,6 +144,9 @@ Token get_next_token(Scanner* scanner) {
             case '/':
                 result.type = TOKEN_DIV;
                 break;
+            case ':':
+                result.type = TOKEN_COLOL;
+                break;
             case '\0':
                 result.type = TOKEN_END_OF_FILE;
                 break;
@@ -163,7 +167,7 @@ char get_next_char(Scanner* scanner) {
 
         if (result == '\n') {
             scanner->position.line++;
-            scanner->position.column = 1;
+            scanner->position.column = 0;
         } else {
             scanner->position.column++;
         }
@@ -199,4 +203,9 @@ void deinit_token(Token* token) {
 
 char peek_char(Scanner* scanner, int64_t offset) {
     return scanner->text_to_scan[scanner->position.index + offset];
+}
+
+void init_scanner(Scanner *scanner, char* source, char* text_to_scan) {
+    init_position(&scanner->position, source);
+    scanner->text_to_scan = text_to_scan;
 }

@@ -36,6 +36,8 @@ enum {
     TOKEN_CURLY_LEFT,
     TOKEN_CURLY_RIGHT,
 
+    TOKEN_COLOL,
+
     TOKEN_END_OF_FILE,
     TOKEN_UNKNOWN
 };
@@ -72,6 +74,7 @@ void skip_whitespace(Scanner* scanner);
 Token peek_token(Scanner* scanner, int64_t offset);
 Token peek_next_token(Scanner* scanner);
 Token get_next_token(Scanner* scanner);
+void init_scanner(Scanner* scanner, char* source, char* text_to_scan);
 void deinit_scanner(Scanner* scanner);
 void deinit_token(Token* token);
 
