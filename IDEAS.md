@@ -186,17 +186,58 @@ deref a
 
 ### Other Types
 
-| Types   | Description                                             |
-|---------|---------------------------------------------------------|
-| []T     | An array with elements of type T.                       |
-| @T      | A pointer to a type T.                                  |
-| own@ T  | An owned pointer to type T.                             |
-| imut T  | An imutable of type T. This should be a super strict type. | 
-| err T   | Error or T?                                             |
-| String  | Alias for Char[]                                        |
-| Type    | The runtime reprensentation of a type.                  |
+| Types             | Description                                             |
+|-------------------|---------------------------------------------------------|
+| T[]/[]T           | An array with elements of type T.                       |
+| T@/@T             | A pointer to a type T.                                  |
+| own@ T / T @own   | An owned pointer to type T.                             |
+| T imut / imut T   | An imutable of type T. This should be a super strict type. | 
+| T err / err T     | Error or T?                                             |
+| String            | Alias for Char[]                                        |
+| Type              | The runtime reprensentation of a type.                  |
 
 ## Language Constructs 
+### Control Flow
+#### If
+TODO: Describe 
+```
+<if_statement> -> if <expression> <code_block> ( else if <expression> <code_block> )* ( else <code_block> )?
+```
+
+```
+if a > b {
+
+} else if a < b {
+
+} else {
+
+}
+```
+
+#### Switch 
+TODO: Describe
+```
+<switch_statement> -> switch <expression> { ( ( case <literal> | default ) <code_block> )* }
+```
+
+#### Foreach loop
+General syntax:
+```
+foreach item, index in collection
+```
+
+In C, loops will be used to count up some number, and doing something until this numter reaches a max. We can express this too, with this loop.
+```
+// C for loop
+for (int i = 0; i < 5; i++)
+
+// Our language alternatives
+foreach i in [0 .. 4]
+
+// or if using enumerable or similar
+array := Int[]{ 1, 2, 3, 4, 5 };
+foreach i in array
+
 ### Array Literals
 
 The following things are only possible at compile time.
@@ -253,26 +294,7 @@ array2 := [2 .. 8, 2];
 etc.
 ```
 
-### Foreach loop
-General syntax:
 ```
-foreach item, index in collection
-```
-
-In C, loops will be used to count up some number, and doing something until this numter reaches a max. We can express this too, with this loop.
-```
-// C for loop
-for (int i = 0; i < 5; i++)
-
-// Our language alternatives
-foreach i in [0 .. 4]
-
-// or if using enumerable or similar
-array := Int[] {1,2,3,4,5};
-foreach i in array
-```
-
-### Control Flow
 
 ### Generics
 TODO: Think about syntax
@@ -290,13 +312,13 @@ Bad_List :: struct<T_Element: Type> {
 
 get_sum :: T_Sum (list: @Bad_List<T_Sum>)<T_Sum: Type> {
     get_sum_node :: T_Sum (node: @Bad_List<T_Sum>.Node) {
-        if (node.next == Null)
+        if node.next == Null
             return node.value;
 
         return node.value + get_sum_node(node.next);
     }
 
-    if (list.head == Null)
+    if list.head == Null
         return T_Sum{};
     
     return get_sum_node(list.head);
@@ -362,7 +384,7 @@ make_iterator :: Int (this: @Array<T_Element>)<T_Element> {
 iterator_next :: @T_Element (this: @Array<T_Element>, iterator: @Int)<T_Element> {
     (*iterator) += 1;
 
-    if (this.data.length <= iterator)
+    if this.data.length <= iterator
         return Null;
 
     return @this.data[iterator];
@@ -412,7 +434,7 @@ main :: Nothing () {
 }
 
 get_sum<T_Sum> :: T_Sum (tree: @Tree<T_Sum>) {
-    if (tree is Tree<T_Sum>.Node) {
+    if tree is Tree<T_Sum>.Node {
         // Trees type has been check, so tree values for Node can be accessed.
         return tree.value + get_sum(tree.left) + get_sum(tree.right);
     } else {
@@ -430,7 +452,7 @@ TODO: Look at zig http://ziglang.org/#parse
 IntParseError :: error;
 
 parse_int :: Int (string: String) {
-    if (string.length == Null)
+    if string.length == Null
         return IntParseError{};
 
     return 10;
@@ -459,7 +481,7 @@ main :: Nothing () {
 ```
 
 ### Built In Functions
-The language should support usefull built in functions that can do things which cannot be expressed in the base language without them.
+The language should support useful built in functions that can do things which cannot be expressed in the base language without them.
 
 #### Type of
 ```
