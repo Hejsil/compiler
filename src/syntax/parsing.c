@@ -42,7 +42,10 @@ AST_Node* parse(Compiler *compiler) {
                 break;
 
             default:
-                // TODO: Compile error
+                compiler_add_message(compiler, peeked_token.position, MESSAGE_ERROR,
+                    "Parser found an unexpected character in global scope, which does "
+                    "not translate into either a declaration or directive.");
+
                 deinit_node(result);
                 free(result);
                 return NULL;
@@ -90,8 +93,17 @@ AST_Node* parse_global_declaration(Compiler* compiler, Scanner* scanner) {
 }
 
 AST_Node* parse_type(Compiler* compiler, Scanner* scanner) {
-    // This grammar is recursive
-    return NULL;
+    AST_Node* result;
+
+    Token current = scanner_get_next_token(scanner);
+
+    switch (current.type) {
+        case TOKEN_IDENTIFIER:
+    }
+}
+
+AST_Node* parse_basic_type(Compiler* compiler, Scanner* scanner) {
+
 }
 
 AST_Node* parse_expression(Compiler* compiler, Scanner* scanner) {

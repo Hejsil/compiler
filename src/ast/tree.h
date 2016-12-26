@@ -15,6 +15,8 @@ enum {
 
     AST_FUNCTION_DECLARATION,
 
+    AST_TYPE,
+
     AST_BINARY_ADD,
     AST_BINARY_SUB,
     AST_BINARY_MUL,
@@ -33,16 +35,56 @@ enum {
     AST_LITERAL_FLOAT,
     AST_LITERAL_STRING,
 
-    AST_TYPE_INT,
-    AST_TYPE_FLOAT,
-    AST_TYPE_CHAR,
-    AST_TYPE_BOOL,
-    AST_TYPE_ARRAY,
-    AST_TYPE_POINTER,
-    AST_TYPE_FUNCTION,
-
     AST_CALL
 };
+
+enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_CHAR,
+    TYPE_BOOL,
+    TYPE_NOTHING,
+    TYPE_ARRAY,
+    TYPE_POINTER,
+    TYPE_FUNCTION,
+    TYPE_STRUCT
+};
+
+typedef struct Type_S {
+    uint8_t type;
+    int64_t size;
+
+    union {
+        struct {
+            bool is_signed;
+        } integer;
+
+        struct {
+            struct Type_S* element_type;
+        } array;
+
+        struct {
+            struct Type_S* pointed_to_type;
+        } pointer;
+
+        struct {
+            struct Type_S* return_type;
+
+            // Elements: Type*
+            Dynamic_Array argument_types;
+        } function;
+
+        struct {
+            // OWN:
+            char* name;
+
+            // Elements: char*
+            Dynamic_Array field_names;
+            // Elements: Type*
+            Dynamic_Array field_types;
+        } struct_type;
+    };
+} Type;
 
 typedef struct AST_Node_S {
     uint8_t type;
@@ -68,7 +110,7 @@ typedef struct AST_Node_S {
             // OWN
             struct AST_Node_S* function;
 
-            // Elements: AST_Node
+            // Elements: AST_Node*
             Dynamic_Array arguments;
         } call;
 
@@ -89,29 +131,6 @@ typedef struct AST_Node_S {
             int64_t size;
             bool is_signed;
         } int_type;
-
-        struct {
-            int64_t size;
-        } float_type;
-
-        struct {
-            int64_t size;
-        } bool_type;
-
-        struct {
-            struct AST_Node_S* element_type;
-        } array_type;
-
-        struct {
-            struct AST_Node_S* pointed_to_type;
-        } pointer_type;
-
-        struct {
-            struct AST_Node_S* return_type;
-
-            // Elements: AST_Node
-            Dynamic_Array argument_types;
-        } function_type;
     };
 } AST_Node;
 
