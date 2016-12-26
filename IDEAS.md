@@ -293,7 +293,6 @@ Remain as is, and dont have to specify the size as it can be determined by the s
 array1 := [1 .. 5];
 array2 := [2 .. 8, 2];
 etc.
-```
 
 ```
 
