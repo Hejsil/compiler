@@ -3,7 +3,6 @@
 #include "compiler.h"
 
 int main(int argc, char** argv) {
-
     char* text = "Hello World\n";
     char* source = "/home/jimmi/Documents/test";
 

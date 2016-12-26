@@ -117,3 +117,30 @@ void deinit_node(AST_Node *node) {
             break;
     }
 }
+
+void init_int_type(AST_Node *node, int64_t size, bool is_signed) {
+    assert(node->type == AST_TYPE_INT);
+
+    node->int_type.size = size;
+    node->int_type.is_signed = is_signed;
+}
+
+void init_float_type(AST_Node *node, int64_t size) {
+    // TODO
+}
+
+void init_bool_type(AST_Node *node, int64_t size) {
+    // TODO
+}
+
+void init_array_type(AST_Node *node, AST_Node *element_type) {
+    // TODO
+}
+
+void init_pointer_type(AST_Node *node, AST_Node *pointed_to_type) {
+    // TODO
+}
+
+void init_function_type(AST_Node *node, AST_Node *return_type) {
+    // TODO
+}

@@ -62,6 +62,7 @@ AST_Node* parse_global_declaration(Compiler *compiler, Scanner* current_scanner)
         return NULL;
     }
 
+    AST_Node* type = parse_type(compiler, current_scanner);
     // TODO: Types can also be explicit.
 
     next = get_next_token(current_scanner);
