@@ -308,3 +308,48 @@ other ideas could include:
 
 This may add a lot of complexity to the compiler, but it also gives a lot more power to the programmer to control the behavior of their code.
 It also allows the programmer to decide how unsafe the code should be.
+
+## Features that has to be covered
+
+To compete with C there are many language features that have to be met, and other have to be considered.
+This is a short and incomplete list.
+
+* Memory management
+    * Stack vs Heap allocation
+    * Manual memory management vs Garbage Collection
+* Inline Assembly / Calling C code
+    * Inline assembly should be close to how C does it, assuming C is target language
+    * Otherwise, many options stay open for how to do it.
+* C Standard Library vs Own Standard Library
+* Typecasting
+    * Strong vs Weak vs User Defined
+    * ```(Float) myint```
+    * ```myint to Float```
+    * ```myint is Float```
+    * ```myint as Float```
+    * ```myint->Float```
+    * ```myint=>Float```
+    * ```typecast(myint, Float)```
+    * Something completely different
+    * Typecasting custom types?
+        * Allow all casting
+        * Rules
+        * User written typecasting methods
+* Selective/Iterative control flow
+* Must return values be used / return void
+* Enums or other simple abstraction
+* Pointer Arithmetics / Interacting directly with memory addresses
+* Preprocessor?
+* Use of multiple files
+    * Keep declarations local / global
+    * Overwriting global declarations with local
+* I/O, string and memory manipulation
+* UI?
+* Debugging
+* Unions?
+* Error handling
+* Concurrency / Parallelism
+* Generics
+* Method overloading
+    * I dare not say operator overloading
+* Target language
