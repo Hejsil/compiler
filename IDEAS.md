@@ -237,6 +237,7 @@ foreach i in [0 .. 4]
 // or if using enumerable or similar
 array := Int[]{ 1, 2, 3, 4, 5 };
 foreach i in array
+```
 
 ### Array Literals
 
@@ -292,7 +293,6 @@ Remain as is, and dont have to specify the size as it can be determined by the s
 array1 := [1 .. 5];
 array2 := [2 .. 8, 2];
 etc.
-```
 
 ```
 
@@ -523,7 +523,7 @@ main :: Nothing () {
 main :: Nothing () {
     array := [1 .. 4, 2]; // wont compile
 }
-```interface_ensure
+```
 
 In the above example a rule ```array_sequese_remainder``` is set. The three examples show what the compiler will do, depending on how the attribute was set.
 
@@ -546,44 +546,65 @@ It also allows the programmer to decide how unsafe the code should be.
 ## Features that has to be covered
 
 To compete with C there are many language features that have to be met, and other have to be considered.
-This is a short and incomplete list.
+This is a short and incomplete list of things that have yet to be specified.
 
 * Memory management
-    * Stack vs Heap allocation
-    * Manual memory management vs Garbage Collection
+    * Memory is allocated on the stack unless otherwise specified
+    * Memory allocation and deallocation is handled by the user
 * Inline Assembly / Calling C code
-    * Inline assembly should be close to how C does it, assuming C is target language
-    * Otherwise, many options stay open for how to do it.
+    * Inline Assembly that map to the C calling
+    * Potentially inline LLVM (Compiler should enforce LLVM target language then)
+    * Call c code
 * C Standard Library vs Own Standard Library
+    * Maybe through just calling c code
 * Typecasting
-    * Strong vs Weak vs User Defined
-    * ```(Float) myint```
+    * Possible conversions:
     * ```myint to Float```
-    * ```myint is Float```
     * ```myint as Float```
-    * ```myint->Float```
-    * ```myint=>Float```
-    * ```typecast(myint, Float)```
-    * Something completely different
+    * ```typecast(myint, Float)``` or ```#cast(myint,Float)``` and let the compiler do the work from behind.
     * Typecasting custom types?
-        * Allow all casting
-        * Rules
-        * User written typecasting methods
+        * Rules to specify how casting can be done
 * Selective/Iterative control flow
 * Must return values be used / return void
+    * Can return ```Nothing``` if there is nothing to return
+    * Rules for whether it is allowed to ignore the return of a function
+        * Maybe even specify it per function, fx. printing returns a status (in C), but it is rarely used.
 * Enums or other simple abstraction
+    * Coming soon
 * Pointer Arithmetics / Interacting directly with memory addresses
+    * Maybe in the distant future
 * Preprocessor?
+    * Could be fun to do
+    * Could tie into rules
+    * But is it a good idea?
 * Use of multiple files
     * Keep declarations local / global
+        * public private
     * Overwriting global declarations with local
+        * Namespace
 * I/O, string and memory manipulation
+    * UTF8 support
+    * Part of libraries
 * UI?
+    * Let C worry about that
 * Debugging
+    * When we know more
 * Unions?
+    * Maybe a better type?
 * Error handling
+    * Maybe
 * Concurrency / Parallelism
+    * pthreads until something better arise.
+    * Scheduler library?
+    * SPPL as target language
+        * Oh dear, imperative => functinal => imperative. And the tuples, oh the horror...
 * Generics
+    * Compile time constrains
 * Method overloading
-    * I dare not say operator overloading
+    * Allow it and have rules to control its use
 * Target language
+    * C
+    * LLVM
+    * SPPL :D
+    * IR
+        * Poke to JIT compilation for a subset of the code for running higher level stuff?
