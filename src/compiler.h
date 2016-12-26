@@ -18,14 +18,14 @@ typedef struct {
     // Elements: Scanner
     Dynamic_Array scanners;
 
-    // Keys: char*
-    // Values: uint8_t
-    Map keywords;
+    // Elements: Message
+    Dynamic_Array messages;
 } Compiler;
 
-void init_compiler(Compiler* compiler);
-void deinit_compiler(Compiler* compiler);
-bool make_scanner_from_file(Compiler* compiler, char* filename, int64_t length);
-void make_scanner_from_text(Compiler* compiler, char* text, int64_t text_length);
+void compiler_init(Compiler *compiler);
+void compiler_deinit(Compiler *compiler);
+void compiler_add_message(Compiler *compiler, Position position, uint8_t type, char* string);
+bool compiler_add_scanner_from_file(Compiler *compiler, char* filename, int64_t length);
+void compiler_add_scanner_from_text(Compiler *compiler, char* text, int64_t text_length);
 
 #endif //GOODLANG_COMPILER_H

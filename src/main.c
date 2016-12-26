@@ -1,20 +1,32 @@
 #include <string.h>
 #include <stdio.h>
 #include "compiler.h"
+#include "basic/message.h"
+#include "syntax/scanning.h"
+#include "syntax/parsing.h"
 
 int main(int argc, char** argv) {
-    char* text = "Hello World\n";
-    char* source = "/home/jimmi/Documents/test";
+    char* text =
+            "main :: Nothing () {\n"
+            "    int1: Int;\n"
+            "    int1 = 7;\n"
+            "    int2 := 3;\n"
+            "\n"
+            "    if int1 > int2 {\n"
+            "        print(int1);\n"
+            "    } else if int1 < int2 {\n"
+            "        print(int2);\n"
+            "    } else {\n"
+            "        print(int1 + int2);\n"
+            "    }\n"
+            "}";
 
     Compiler compiler;
-    init_compiler(&compiler);
-    make_scanner_from_file(&compiler, source, strlen(source));
-    make_scanner_from_text(&compiler, text, strlen(text));
+    compiler_init(&compiler);
+    compiler_add_scanner_from_text(&compiler, text, strlen(text));
 
-    Scanner file_scanner;
-    dynamic_array_get(&compiler.scanners, 0, &file_scanner);
-    printf("%s\n", file_scanner.text_to_scan);
+    parse(&compiler);
 
-    deinit_compiler(&compiler);
+    compiler_deinit(&compiler);
     return 0;
 }

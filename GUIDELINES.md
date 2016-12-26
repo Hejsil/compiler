@@ -17,10 +17,6 @@
             * `database > db`
         * When variable names are very long, it might be nessesary 
             * `ast > abstract_syntax_tree`
-    * Avoid writing types in the names
-        * Only add the types when names become very vague without them: 
-            * `get_next_char > get_next`
-            * `scanner_get_next > get_next`
 
 ### Whitespace
 * For each layer of scope, the code should be indented by 4 spaces

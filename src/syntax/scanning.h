@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include "../ast/position.h"
 #include "../basic/dynamic_array.h"
+#include "../compiler.h"
 
 enum {
     TOKEN_IDENTIFIER,
@@ -17,6 +18,15 @@ enum {
 
     TOKEN_NUMBER_FLOAT,
     TOKEN_NUMBER_INT,
+
+    TOKEN_KEYWORD_STRUCT,
+    TOKEN_KEYWORD_UNION,
+    TOKEN_KEYWORD_FOREACH,
+    TOKEN_KEYWORD_WHILE,
+    TOKEN_KEYWORD_IF,
+    TOKEN_KEYWORD_SWITCH,
+    TOKEN_KEYWORD_BREAK,
+    TOKEN_KEYWORD_CONTINUE,
 
     TOKEN_LESS_THAN,
     TOKEN_GREATER_THAN,
@@ -67,15 +77,15 @@ typedef struct {
     };
 } Token;
 
-char peek_char(Scanner* scanner, int64_t offset);
-char peek_next_char(Scanner* scanner);
-char get_next_char(Scanner* scanner);
-void skip_whitespace(Scanner* scanner);
-Token peek_token(Scanner* scanner, int64_t offset);
-Token peek_next_token(Scanner* scanner);
-Token get_next_token(Scanner* scanner);
-void init_scanner(Scanner* scanner, char* source, char* text_to_scan);
-void deinit_scanner(Scanner* scanner);
-void deinit_token(Token* token);
+char scanner_peek_char(Scanner *scanner, int64_t offset);
+char scanner_peek_next_char(Scanner *scanner);
+char scanner_get_next_char(Scanner *scanner);
+void scanner_skip_whitespace(Scanner *scanner);
+Token scanner_peek_token(Scanner *scanner, int64_t offset);
+Token scanner_peek_next_token(Scanner *scanner);
+Token scanner_get_next_token(Scanner *scanner);
+void scanner_init(Scanner *scanner, char *source, char *text_to_scan);
+void scanner_deinit(Scanner *scanner);
+void token_deinit(Token *token);
 
 #endif //GOODLANG_SCANNING_H

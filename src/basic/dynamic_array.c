@@ -41,6 +41,8 @@ void* dynamic_array_allocate_at(Dynamic_Array *array, int64_t index) {
     memmove(dynamic_array_unsafe_get_ptr(array, index + 1),
             dynamic_array_unsafe_get_ptr(array, index),
             (array->count - index) * array->element_size);
+    array->count++;
+
     return dynamic_array_unsafe_get_ptr(array, index);
 }
 
@@ -51,7 +53,6 @@ void* dynamic_array_allocate_next(Dynamic_Array *array) {
 void dynamic_array_add(Dynamic_Array *array, int64_t index, void *element) {
     dynamic_array_allocate_at(array, index);
     memcpy(dynamic_array_unsafe_get_ptr(array, index), element, array->element_size);
-    array->count++;
 }
 
 void dynamic_array_add_last(Dynamic_Array *array, void *element) {
