@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include "syntax/scanning.h"
 #include "basic/dynamic_array.h"
+#include "basic/map.h"
 
 typedef struct {
     // Elements: char*
@@ -16,6 +17,10 @@ typedef struct {
 
     // Elements: Scanner
     Dynamic_Array scanners;
+
+    // Keys: char*
+    // Values: uint8_t
+    Map keywords;
 } Compiler;
 
 void init_compiler(Compiler* compiler);

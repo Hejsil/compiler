@@ -99,7 +99,7 @@ Vector3 :: struct {
     x, y, z : Int;
 }
 
-mul :: Int(x: Int, y: Int) {
+mul :: Int (x: Int, y: Int) {
     return x * y;
 }
 ```
@@ -110,7 +110,7 @@ Vector3 : Type : struct {
     x, y, z: Int;
 }
 
-mul : Int (Int, Int) : Int(x: Int, y: Int) {
+mul : Int (Int, Int) : Int (x: Int, y: Int) {
     return x * y;
 }
 ```
@@ -188,12 +188,12 @@ deref a
 
 | Types             | Description                                             |
 |-------------------|---------------------------------------------------------|
-| T[]/[]T           | An array with elements of type T.                       |
-| T@/@T             | A pointer to a type T.                                  |
-| own@ T / T @own   | An owned pointer to type T.                             |
-| T imut / imut T   | An imutable of type T. This should be a super strict type. | 
-| T err / err T     | Error or T?                                             |
-| String            | Alias for Char[]                                        |
+| []T               | An array with elements of type T.                       |
+| @T                | A pointer to a type T.                                  |
+| own@ T            | An owned pointer to type T.                             |
+| imut T            | An imutable of type T. This should be a super strict type. | 
+| err T             | Error or T?                                             |
+| String            | Alias for []Char                                        |
 | Type              | The runtime reprensentation of a type.                  |
 
 ## Language Constructs 
@@ -201,12 +201,18 @@ deref a
 #### If
 TODO: Describe 
 ```
-<if_statement> -> if <expression> <code_block> ( else if <expression> <code_block> )* ( else <code_block> )?
+<if_statement> -> if <expression> <block_or_statement> <if_else_statement>* <else_statement>? 
+<if_else_statement> -> else if <expression> <block_or_statement>
+<else_statement> -> else <block_or_statement>
+<block_or_statement> -> <statement> 
+                      | { <statement>* }
 ```
 
 ```
 if a > b {
-
+    
+    // Idea: Maybe have continue work in an if-statement?
+    continue;
 } else if a < b {
 
 } else {
@@ -217,13 +223,49 @@ if a > b {
 #### Switch 
 TODO: Describe
 ```
-<switch_statement> -> switch <expression> { ( ( case <literal> | default ) <code_block> )* }
+<switch_statement> -> switch <expression> { ( ( case <literal> : | default : ) <statement>* )* }
+```
+
+The semantics for switch statements in this language are very different from how they are in C.
+* Scope
+    * Each case has it's own scope, instead of sharing a scope.
+* Fallthrough and break
+    * Cases containing one or more statements are breaking by default.
+    * Cases with zero statements are fallthrough by default.
+    * These rules can be overridden with the break and continue statements.
+    
+```
+switch i {
+    // Empty case is fallthrough
+    case 1:
+    case 2:
+        break; // Empty rule can be overridden by the break statement
+    case 3:
+        continue; // Explicit continue is also allowed
+    
+    // One or more statement makes a case break by default.
+    case 4:
+        value := i + 1;
+        
+    case 5:
+        // Case 4 and 5 are of different scopes, so value can be redeclared
+        value := i + 2;
+        continue; // Explicit fallthrough
+        
+    case 6:
+        value := i + 3;
+        break; // Explicit break
+        
+    default:
+        // There is nothing to fall through to, so default has to break
+        break;
+}
 ```
 
 #### Foreach loop
 General syntax:
 ```
-foreach item, index in collection
+<foreach_statement> -> foreach <identifier> ( , <identifier> )? in <expression> <block_or_statement>
 ```
 
 In C, loops will be used to count up some number, and doing something until this numter reaches a max. We can express this too, with this loop.
@@ -235,20 +277,20 @@ for (int i = 0; i < 5; i++)
 foreach i in [0 .. 4]
 
 // or if using enumerable or similar
-array := Int[]{ 1, 2, 3, 4, 5 };
+array := []Int{ 1, 2, 3, 4, 5 };
 foreach i in array
 ```
 
 ### Array Literals
 
-The following things are only possible at compile time.
+The following things are only possible at compile time (Actually this can be done at runtime. C can do it).
 
 ```
 // Array literal syntax:
-array1 := Int[]{ 1, 2, 3, 4, 5 };
-array2 := Int[]{ 2, 4, 6, 8 };
-array3 := Double[]{ 1.0, 1.5, 2.0 };
-array4 := Int[]{ 5, 2, 8, 1 };
+array1 := []Int{ 1, 2, 3, 4, 5 };
+array2 := []Int{ 2, 4, 6, 8 };
+array3 := []Double{ 1.0, 1.5, 2.0 };
+array4 := []Int{ 5, 2, 8, 1 };
 
 // Array sequense syntax:
 array1 := [1 .. 5];
@@ -267,20 +309,20 @@ array1 := ]0 .. 6[;
 // What will happen in this case?
 // In my opinion, we should either simulate how a for loop in C would assign these elements, or give an error.
 array5 := [1 .. 4, 2];
-// array5 := Int[]{ 1, 3 };
+// array5 := []Int{ 1, 3 };
 ```
 
 #### Declaring array before setting size
 An array can be declared, and then initialized with size later:
 ```
-array1 : Int[];
+array1 : []Int;
 array1 = [4];
 ```
 
 Or it can have its type and size initialized by at once.
 
 ```
-array1 := Int[4]
+array1 := [4]Int
 ```
 
 By just initializing the array, all elements are set according to standard.
@@ -372,7 +414,7 @@ IIterable :: functionality<T_This, T_Element, T_Iterator> {
 
 [ensure_interface(IIterable<Array<T_Element>, T_Element, Int)]
 Array :: struct<T_Element> {
-    data: T_Element[];
+    data: []T_Element;
 }
 
 [interface_function(IIterable<Array<T_Element>, T_Element, Int>)]
@@ -392,7 +434,7 @@ iterator_next :: @T_Element (this: @Array<T_Element>, iterator: @Int)<T_Element>
 
 
 main :: Nothing () {
-    array := Array<Float>{ data = new Float[]{ 5.1, 2.5, 2.77 } };
+    array := Array<Float>{ data = new []Float{ 5.1, 2.5, 2.77 } };
     iterator_sum := 0;
     float_sum := 0.0;
 
@@ -511,12 +553,12 @@ For complex programs over multiple folders, multiple files could be used, where 
 ```
 [array_sequese_remainder(WARNING_CEIL)]
 main :: Nothing () {
-    array := [1 .. 4, 2]; // Int[]{ 1, 3, 5 }
+    array := [1 .. 4, 2]; // []Int{ 1, 3, 5 }
 }
 
 [array_sequese_remainder(WARNING_FLOOR)]
 main :: Nothing () {
-    array := [1 .. 4, 2]; // Int[]{ 1, 3 }
+    array := [1 .. 4, 2]; // []Int{ 1, 3 }
 }
 
 [array_sequese_remainder(ERROR)]

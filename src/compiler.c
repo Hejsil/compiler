@@ -8,6 +8,15 @@
 #include "basic/file.h"
 
 void init_compiler(Compiler* compiler) {
+    static const char KEYWORD_STRUCT[] = "struct";
+    static const char KEYWORD_UNION[] = "union";
+    static const char KEYWORD_WHILE[] = "while";
+    static const char KEYWORD_FOREACH[] = "foreach";
+    static const char KEYWORD_IF[] = "if";
+    static const char KEYWORD_SWITCH[] = "switch";
+    static const char KEYWORD_BREAK[] = "break";
+    static const char KEYWORD_CONTINUE[] = "continue";
+
     dynamic_array_init(&compiler->file_names, sizeof(char*), 16);
     dynamic_array_init(&compiler->scanners, sizeof(Scanner), 16);
 }
