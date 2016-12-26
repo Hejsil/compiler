@@ -237,6 +237,7 @@ foreach i in [0 .. 4]
 // or if using enumerable or similar
 array := Int[]{ 1, 2, 3, 4, 5 };
 foreach i in array
+```
 
 ### Array Literals
 
