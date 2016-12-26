@@ -106,11 +106,11 @@ mul :: Int(x: Int, y: Int) {
 
 Here, we use the infered type syntax for constant, but these declarations also have a type:
 ```
-Vector3 : struct { Int, Int, Int } : struct {
+Vector3 : Type : struct {
     x, y, z: Int;
 }
 
-mul : Int(Int, Int) : Int(x: Int, y: Int) {
+mul : Int (Int, Int) : Int(x: Int, y: Int) {
     return x * y;
 }
 ```
@@ -161,7 +161,8 @@ ref a
 deref a
 ```
 
-## Basic types
+## Build in Types
+### Basic Types
 | Types   | Size                                                    |
 |---------|---------------------------------------------------------|
 | Int     | 64-bits                                                 |
@@ -182,6 +183,18 @@ deref a
 | Bool8   | 8-bits                                                  |
 | Char    | Variadic when stored in an array (UTF8). 32-bits alone. |
 | Nothing | 0-bits                                                  |
+
+### Other Types
+
+| Types   | Description                                             |
+|---------|---------------------------------------------------------|
+| []T     | An array with elements of type T.                       |
+| @T      | A pointer to a type T.                                  |
+| own@ T  | An owned pointer to type T.                             |
+| imut T  | An imutable of type T. This should be a super strict type. | 
+| err T   | Error or T?                                             |
+| String  | Alias for Char[]                                        |
+| Type    | The runtime reprensentation of a type.                  |
 
 ## Language Constructs 
 ### Array Literals
@@ -261,13 +274,212 @@ foreach i in array
 
 ### Control Flow
 
+### Generics
+TODO: Think about syntax
+```
+Bad_List :: struct<T_Element: Type> {
+    head: @Node;
+    tail: @Node;
+
+    Node :: struct {
+        value: T_Element;
+        next: @Node;
+        prev: @Node;
+    }
+}
+
+get_sum :: T_Sum (list: @Bad_List<T_Sum>)<T_Sum: Type> {
+    get_sum_node :: T_Sum (node: @Bad_List<T_Sum>.Node) {
+        if (node.next == Null)
+            return node.value;
+
+        return node.value + get_sum_node(node.next);
+    }
+
+    if (list.head == Null)
+        return T_Sum{};
+    
+    return get_sum_node(list.head);
+}
+```
+
+### Memory Interfaces
+Sometimes a programmer might want to implement a function that can operate on any type that contains certain fields. In this language, an interface would be used.
+```
+IVector2 :: interface {
+    x, y : Int;
+}
+
+Vector3 :: struct {
+    x, y, z : Int;
+}
+
+[ensure_interface(IVector2)]
+Animal :: struct {
+    is_dead: Bool;
+
+    [interface_entry(IVector2)]
+    position_x: Int;
+    position_y: Int;
+}
+
+vector2_add_fields :: Int (vector: IVector2) {
+    return vector.x + vector.y;
+}
+
+main :: Nothing () {
+    vector3 := Vector3{ x = 1, y = 2, z = 3 };
+    animal := Animal{ is_dead = false, position_x = 24, position_y = 33 };
+    
+    result1 := vector2_add_fields(vector3);
+    result2 := vector2_add_fields(animal);
+}
+```
+
+The way the interfaces work is simple. They are a way of telling the compiler that at a certain offset in memory, on type is structually identical to the interface. For the `Vector3` struct, the compiler is able to deduce that `Vector3` upholds the `IVector2` interface. For `Animal`, the attribute `interface_entry` was used to specify the entry at which it upholds `IVector2`. The `ensure_interface` attribute can also be used in the code to force the compiler to give an error if a type doesn't uphold a interface.
+
+
+### Function Interfaces
+TODO: Think this more through
+
+```
+IIterable :: functionality<T_This, T_Element, T_Iterator> {
+    make_iterator: T_Iterator (@T_This);
+    iterator_next: @T_Element (@T_This, @T_Iterator);
+}
+
+[ensure_interface(IIterable<Array<T_Element>, T_Element, Int)]
+Array :: struct<T_Element> {
+    data: T_Element[];
+}
+
+[interface_function(IIterable<Array<T_Element>, T_Element, Int>)]
+make_iterator :: Int (this: @Array<T_Element>)<T_Element> {
+    return -1;
+}
+
+[interface_function(IIterable<Array<T_Element>, T_Element, Int>)]
+iterator_next :: @T_Element (this: @Array<T_Element>, iterator: @Int)<T_Element> {
+    (*iterator) += 1;
+
+    if (this.data.length <= iterator)
+        return Null;
+
+    return @this.data[iterator];
+}
+
+
+main :: Nothing () {
+    array := Array<Float>{ data = new Float[]{ 5.1, 2.5, 2.77 } };
+    iterator_sum := 0;
+    float_sum := 0.0;
+
+    foreach item, iterator in array {
+        iterator_sum += iterator;
+        float_sum += item;
+    }
+
+    delete array.data;
+}
+```
+
+### Tagged Unions
+In C, often structures are made which contains unions. Often these structs will have some enum assosiated with each union memeber to ensure "safe" access. This is however not safe, as the compiler cannot catch errors in the code that uses this structure. This language solves this problem by having tagged unions, with compile time checks, to ensure safe access.
+
+```
+Tree<T_Value> :: tagged_union {
+    Node {
+        value: T_Value;
+        left, right: @Tree<T_Value>;
+    },
+    Leaf {
+        value: T_Value;
+    }
+}
+
+main :: Nothing () {
+    tree := Tree<Int>.Node{ 
+        value = 5, 
+        left = new Tree<Int>.Leaf{ value = 6 }, 
+        right = new Tree<Int>.Node {
+            value = 2,
+            left = new Tree<Int>.Leaf{ value = 9 },
+            right = new Tree<Int>.Leaf{ value = 7 }
+        } 
+    };
+
+    sum := get_sum<Int>(@tree);
+}
+
+get_sum<T_Sum> :: T_Sum (tree: @Tree<T_Sum>) {
+    if (tree is Tree<T_Sum>.Node) {
+        // Trees type has been check, so tree values for Node can be accessed.
+        return tree.value + get_sum(tree.left) + get_sum(tree.right);
+    } else {
+        // Here, all but one tag has been exhausted, so the compiler should be able to 
+        // deduce what fields are safe to access.
+        return tree.value;
+    }
+}
+
+```
+
+### Error handling
+TODO: Look at zig http://ziglang.org/#parse
+```
+IntParseError :: error;
+
+parse_int :: Int (string: String) {
+    if (string.length == Null)
+        return IntParseError{};
+
+    return 10;
+}
+
+main :: Nothing () {
+    result: Int;
+
+    // Idea 1. Just use if/switch statment
+    // Problems. Very not verbose. What if we need to handle 15 functions that
+    // can return some error, and all we want is to pass it to the next function.
+    switch (parse_int("")) {
+        case IntParseError: 
+            // Handle Error
+        default:
+            result = value;
+    }
+
+    // Idea 2. Have a handle statment?
+    // Problems. How exactly would it work?
+    result = handle(parse_int("")) IntParseError => \*Handle Error*\;
+
+    // Idea 3. Zig does something like this
+    result = parse_int("") |IntParseError| => 
+}
+```
 
 ### Built In Functions
 The language should support usefull built in functions that can do things which cannot be expressed in the base language without them.
 
 #### Type of
+```
+#type_of: Type (expression: #AST_Expression)
+```
 
 #### Size of
+```
+#size_of: Int (type: Type)
+```
+
+#### Init
+```
+#init<T_This>: void (this: @T_This)
+```
+
+#### DeInit
+```
+#deinit<T_This>: void (this: @T_This)
+```
 
 ### Attribute
 It should be possible for the user to control what the compiler should and shouldn't allow. This will most likely be in a separate file.
@@ -289,7 +501,7 @@ main :: Nothing () {
 main :: Nothing () {
     array := [1 .. 4, 2]; // wont compile
 }
-```
+```interface_ensure
 
 In the above example a rule ```array_sequese_remainder``` is set. The three examples show what the compiler will do, depending on how the attribute was set.
 
