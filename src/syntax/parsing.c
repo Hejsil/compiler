@@ -92,18 +92,16 @@ AST_Node* parse_global_declaration(Compiler* compiler, Scanner* scanner) {
     }
 }
 
-AST_Node* parse_type(Compiler* compiler, Scanner* scanner) {
-    AST_Node* result;
-
+Type* parse_type(Compiler* compiler, Scanner* scanner) {
     Token current = scanner_get_next_token(scanner);
 
     switch (current.type) {
-        case TOKEN_IDENTIFIER:
+        case TOKEN_POINTER:
+        case TOKEN_SQUARE_LEFT:
+        case TOKEN_PAR_LEFT:
+        default:
+            break;
     }
-}
-
-AST_Node* parse_basic_type(Compiler* compiler, Scanner* scanner) {
-
 }
 
 AST_Node* parse_expression(Compiler* compiler, Scanner* scanner) {

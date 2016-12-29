@@ -118,29 +118,37 @@ void deinit_node(AST_Node *node) {
     }
 }
 
-void init_int_type(AST_Node *node, int64_t size, bool is_signed) {
-    assert(node->type == AST_TYPE_INT);
+Type *make_type(uint8_t type) {
+    Type* result = malloc(sizeof(Type));
+    result->type = type;
 
-    node->int_type.size = size;
-    node->int_type.is_signed = is_signed;
+    return result;
 }
 
-void init_float_type(AST_Node *node, int64_t size) {
+void init_int_type(Type* node, int64_t size, bool is_signed) {
+    assert(node->type == TYPE_INT);
+}
+
+void init_float_type(Type* node, int64_t size) {
     // TODO
 }
 
-void init_bool_type(AST_Node *node, int64_t size) {
+void init_char_type(Type *node) {
+
+}
+
+void init_bool_type(Type* node, int64_t size) {
     // TODO
 }
 
-void init_array_type(AST_Node *node, AST_Node *element_type) {
+void init_array_type(Type* node, AST_Node *element_type) {
     // TODO
 }
 
-void init_pointer_type(AST_Node *node, AST_Node *pointed_to_type) {
+void init_pointer_type(Type* node, AST_Node *pointed_to_type) {
     // TODO
 }
 
-void init_function_type(AST_Node *node, AST_Node *return_type) {
+void init_function_type(Type* node, AST_Node *return_type) {
     // TODO
 }

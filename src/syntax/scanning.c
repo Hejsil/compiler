@@ -65,39 +65,6 @@ Token scanner_get_next_token(Scanner *scanner) {
             result.type = TOKEN_KEYWORD_BREAK;
         } else if (strcmp(value, "continue")) {
             result.type = TOKEN_KEYWORD_CONTINUE;
-
-        } else if (strcmp(value, "Int")) {
-            result.type = TOKEN_KEYWORD_INT;
-        } else if (strcmp(value, "Int8")) {
-            result.type = TOKEN_KEYWORD_INT8;
-        } else if (strcmp(value, "Int16")) {
-            result.type = TOKEN_KEYWORD_INT16;
-        } else if (strcmp(value, "Int32")) {
-            result.type = TOKEN_KEYWORD_INT32;
-        } else if (strcmp(value, "Int64")) {
-            result.type = TOKEN_KEYWORD_INT64;
-        } else if (strcmp(value, "UInt")) {
-            result.type = TOKEN_KEYWORD_UINT;
-        } else if (strcmp(value, "UInt8")) {
-            result.type = TOKEN_KEYWORD_UINT8;
-        } else if (strcmp(value, "UInt16")) {
-            result.type = TOKEN_KEYWORD_UINT16;
-        } else if (strcmp(value, "UInt32")) {
-            result.type = TOKEN_KEYWORD_UINT32;
-        } else if (strcmp(value, "UInt64")) {
-            result.type = TOKEN_KEYWORD_UINT64;
-        } else if (strcmp(value, "Float")) {
-            result.type = TOKEN_KEYWORD_FLOAT;
-        } else if (strcmp(value, "Float32")) {
-            result.type = TOKEN_KEYWORD_CONTINUE;
-        } else if (strcmp(value, "Float64")) {
-            result.type = TOKEN_KEYWORD_CONTINUE;
-        } else if (strcmp(value, "Bool")) {
-            result.type = TOKEN_KEYWORD_CONTINUE;
-        } else if (strcmp(value, "Bool1")) {
-            result.type = TOKEN_KEYWORD_CONTINUE;
-        } else if (strcmp(value, "Bool8")) {
-            result.type = TOKEN_KEYWORD_CONTINUE;
         } else {
             result.type = TOKEN_IDENTIFIER;
             result.value = value;
@@ -155,6 +122,9 @@ Token scanner_get_next_token(Scanner *scanner) {
                 result.value = allocate_string_copy_without_strlen(&scanner->text_to_scan[start_index], length);
                 break;
             }
+            case '@':
+                result.type = TOKEN_POINTER;
+                break;
             case '(':
                 result.type = TOKEN_PAR_LEFT;
                 break;
