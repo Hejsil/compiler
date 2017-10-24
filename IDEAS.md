@@ -367,6 +367,75 @@ get_sum :: T_Sum (list: @Bad_List<T_Sum>)<T_Sum: Type> {
 }
 ```
 
+#### Ideas for generic syntax
+I like `||`(`|T: Type|`) for enclosing generic parameters, as 
+`<>`(`<T: Type>`) are used as operators in the language
+already, and the "logical or" operator syntax could be `or`.
+
+So the goal is, that the user should be able to make
+and use generic functions and structs.
+At call/use site, I can only come up with one good syntax:
+
+```
+// Call proc:
+res := proc|Int|(5);
+
+// Declare something to be of some generic type
+delc: SomeType|Int, Float|;
+
+// We might also want to infer the generic parameters:
+res := Proc(5); // Compiles to "Proc|Int|(5)"
+```
+
+As for declaring generics, there are 3 different options to take:
+
+* Generics is something you do on the identifier in a
+  declaration.
+    * Pros:
+        * Generic is unified to one concept that works on 
+          anything that can be delcared.
+        * This might also make it more clear, that generics
+          not are something unique to types.
+    * Cons:
+        * Generics tend to be assosiated with types, so them
+          not being on types is a little weird.
+        * It can be used like C++ templates, which might be
+          bad...
+```
+Struct|T: Type| := struct { a: T; };
+proc|T: Type| := func(a: T) {  };
+// This will be compile time evaluated
+MetaAdd|a: Int, b: Int| := a + b; 
+```
+
+* Generics is specified on the literals (funcs and structs).
+    * Pros:
+        * This is how it is seen in most languages.
+    * Cons:
+        * Sadly, in this language `struct { }` is a Type
+          literal, and `func()` is a lambda/function literal.
+          So we are giving certain literals generics, but not
+          others? Should `5|T: Type|` be a thing? What would
+          it mean? I guess arrays are like this too, so it's
+          not totally inconsistant.
+```
+Struct := struct|T: Type| { a: T; }
+proc := func|T: Type|(a: T) {  }
+```
+
+* Generics in the type definition.
+    * Pros:
+        * I don't really know, but I think it makes more
+          sense than on literals.
+    * Cons:
+        * This could become quite verbose to write, for no
+          real benifit.
+        * There is also a syntax inconsistency problem here.
+```
+Struct : Type|T: Type| = struct { a: T; }
+proc : func|T: Type|(T) = func(a: T) {  }
+```
+
 ### Memory Interfaces
 Sometimes a programmer might want to implement a function that can operate on any type that contains certain fields. In this language, an interface would be used.
 ```
